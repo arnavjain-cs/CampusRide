@@ -9,41 +9,51 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23d8ff72'/%3E%3Cpath d='M7 18.5 11 11h10l4 7.5M9 18h14v5H9z' fill='none' stroke='%230d0f10' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3Ccircle cx='12' cy='23' r='2' fill='%230d0f10'/%3E%3Ccircle cx='20' cy='23' r='2' fill='%230d0f10'/%3E%3C/svg%3E" />
+  <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@6.10.0/dist/maplibre-gl.css" />
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23e4b85f'/%3E%3Cpath d='M7 18.5 11 11h10l4 7.5M9 18h14v5H9z' fill='none' stroke='%230d0f10' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3Ccircle cx='12' cy='23' r='2' fill='%230d0f10'/%3E%3Ccircle cx='20' cy='23' r='2' fill='%230d0f10'/%3E%3C/svg%3E" />
   <style>
-    :root { color-scheme: dark; --ink:#0d0f10; --panel:#151819; --panel-2:#1b1f20; --line:#292e2f; --muted:#929a98; --text:#f5f6f3; --accent:#d8ff72; --accent-ink:#11150b; --white:#fff; }
+    :root { color-scheme: dark; --ink:#0d0f10; --panel:#151718; --panel-2:#1c1e1f; --line:#302e2a; --muted:#9b9890; --text:#f7f5f0; --accent:#e4b85f; --accent-soft:#f1cc7d; --accent-dim:rgba(228,184,95,.12); --accent-glow:rgba(228,184,95,.24); --accent-ink:#171108; --white:#fff; --font-sans:"DM Sans",sans-serif; --font-display:Manrope,sans-serif; }
     * { box-sizing:border-box; }
-    html, body { margin:0; min-height:100%; background:var(--ink); color:var(--text); font-family:"DM Sans",sans-serif; }
+    html, body { margin:0; min-height:100%; background:var(--ink); color:var(--text); font-family:var(--font-sans); }
     button, input, select { font:inherit; }
     button { cursor:pointer; }
     .app { min-height:100vh; display:grid; grid-template-rows:72px 1fr; overflow:hidden; }
     header { display:flex; align-items:center; justify-content:space-between; padding:0 28px; border-bottom:1px solid var(--line); background:rgba(13,15,16,.94); backdrop-filter:blur(16px); z-index:20; }
-    .brand { display:flex; gap:11px; align-items:center; font:800 1.15rem Manrope,sans-serif; letter-spacing:-.03em; }
+    .brand { display:flex; gap:11px; align-items:center; font:800 1.15rem var(--font-display); letter-spacing:-.03em; }
     .brand-mark { width:34px; height:34px; border-radius:10px; background:var(--accent); color:var(--accent-ink); display:grid; place-items:center; }
     .brand-mark svg { width:21px; }
     .header-actions { display:flex; align-items:center; gap:10px; }
-    .verified { display:flex; align-items:center; gap:8px; color:#c7ccca; font-size:.88rem; padding:9px 12px; }
-    .verified i { width:7px; height:7px; border-radius:50%; background:var(--accent); box-shadow:0 0 0 4px rgba(216,255,114,.1); }
+    .verified { display:flex; align-items:center; gap:8px; color:#cec9bd; font-size:.88rem; padding:9px 12px; }
+    .verified i { width:7px; height:7px; border-radius:50%; background:var(--accent); box-shadow:0 0 0 4px var(--accent-dim); }
     .post-btn { border:0; border-radius:12px; background:var(--accent); color:var(--accent-ink); font-weight:700; padding:12px 18px; }
     .main { min-height:0; display:grid; grid-template-columns:minmax(0,1fr) 480px; }
-    .map { position:relative; min-height:calc(100vh - 72px); overflow:hidden; background:#101314; }
-    .map svg { position:absolute; inset:0; width:100%; height:100%; }
-    .map-grid { opacity:.5; }
-    .map-label { fill:#77807e; font:500 13px "DM Sans",sans-serif; letter-spacing:.03em; }
-    .campus-label { fill:#d4dad7; font:700 14px Manrope,sans-serif; }
-    .map-top { position:absolute; top:24px; left:24px; right:24px; display:flex; justify-content:space-between; align-items:flex-start; }
-    .map-pill { background:rgba(21,24,25,.88); border:1px solid rgba(255,255,255,.08); border-radius:14px; box-shadow:0 18px 48px rgba(0,0,0,.22); backdrop-filter:blur(18px); padding:12px 15px; }
-    .map-pill strong { display:block; font:700 .92rem Manrope,sans-serif; }
+    .map { position:relative; min-height:calc(100vh - 72px); overflow:hidden; background:#0d0f10; }
+    #mapCanvas { position:absolute; inset:0; }
+    .maplibregl-canvas { outline:none; }
+    .maplibregl-ctrl-bottom-left, .maplibregl-ctrl-bottom-right { z-index:4; }
+    .maplibregl-ctrl-attrib { color:#8f8b82; background:rgba(13,15,16,.82) !important; }
+    .maplibregl-ctrl-attrib a { color:#d5d0c4; }
+    .maplibregl-ctrl-group { border:1px solid rgba(255,255,255,.11); border-radius:13px; overflow:hidden; box-shadow:0 18px 45px rgba(0,0,0,.28); }
+    .maplibregl-ctrl-group button { width:42px; height:42px; background-color:rgba(21,23,24,.94); }
+    .maplibregl-ctrl-group button + button { border-top:1px solid rgba(255,255,255,.09); }
+    .maplibregl-ctrl-group button:hover { background-color:#252728; }
+    .maplibregl-ctrl-icon { filter:invert(1); }
+    .map-top { position:absolute; z-index:5; top:24px; left:24px; right:24px; display:flex; justify-content:space-between; align-items:flex-start; pointer-events:none; }
+    .map-pill { background:rgba(21,23,24,.88); border:1px solid rgba(255,255,255,.09); border-radius:14px; box-shadow:0 18px 48px rgba(0,0,0,.28); backdrop-filter:blur(18px); padding:12px 15px; }
+    .map-pill strong { display:block; font:700 .92rem var(--font-display); }
     .map-pill span { color:var(--muted); font-size:.8rem; }
-    .map-key { display:flex; gap:10px; }
+    .map-key { display:flex; gap:10px; pointer-events:auto; }
     .icon-btn { width:44px; height:44px; border:1px solid rgba(255,255,255,.08); background:rgba(21,24,25,.88); color:var(--text); border-radius:14px; display:grid; place-items:center; backdrop-filter:blur(18px); }
-    .marker { position:absolute; transform:translate(-50%,-50%); width:42px; height:42px; border-radius:50% 50% 50% 12px; rotate:-45deg; background:var(--accent); border:4px solid #16191a; box-shadow:0 12px 25px rgba(0,0,0,.35); display:grid; place-items:center; }
-    .marker span { rotate:45deg; color:var(--accent-ink); font:800 12px Manrope,sans-serif; }
-    .m1 { left:23%; top:63%; } .m2 { left:63%; top:25%; background:#fff; } .m3 { left:78%; top:70%; }
-    .map-caption { position:absolute; left:24px; bottom:24px; color:#858d8b; font-size:.78rem; }
+    .icon-btn svg { width:19px; height:19px; }
+    .map-marker { min-width:42px; height:42px; padding:0 10px; border:3px solid #0f1112; border-radius:14px 14px 14px 5px; background:var(--accent); color:var(--accent-ink); box-shadow:0 12px 30px rgba(0,0,0,.42); display:grid; place-items:center; font:800 11px var(--font-display); cursor:pointer; }
+    .map-marker span { white-space:nowrap; }
+    .map-marker.destination { background:#f7f5f0; color:#151718; }
+    .map-marker.active { background:var(--accent); box-shadow:0 0 0 5px var(--accent-glow),0 14px 34px rgba(0,0,0,.48); }
+    .map-caption { position:absolute; z-index:5; left:24px; bottom:28px; color:#aaa59a; font-size:.78rem; background:rgba(13,15,16,.75); border:1px solid rgba(255,255,255,.07); border-radius:999px; padding:8px 11px; backdrop-filter:blur(12px); }
+    .map-status { position:absolute; z-index:6; inset:50% auto auto 50%; translate:-50% -50%; padding:10px 13px; border-radius:12px; background:rgba(21,23,24,.9); color:var(--muted); font-size:.82rem; border:1px solid rgba(255,255,255,.08); }
     .panel { min-height:0; overflow:auto; border-left:1px solid var(--line); background:var(--panel); padding:26px; }
     .eyebrow { display:flex; justify-content:space-between; align-items:center; color:var(--muted); font-size:.8rem; text-transform:uppercase; letter-spacing:.12em; font-weight:700; }
-    h1 { margin:14px 0 22px; font:700 clamp(2rem,3vw,3rem)/1.05 Manrope,sans-serif; letter-spacing:-.055em; max-width:400px; }
+    h1 { margin:14px 0 22px; font:700 clamp(2rem,3vw,3rem)/1.05 var(--font-display); letter-spacing:-.055em; max-width:400px; }
     .searchbox { border:1px solid #343a3b; background:var(--panel-2); border-radius:18px; padding:6px; box-shadow:0 24px 50px rgba(0,0,0,.18); }
     .field { min-height:58px; display:grid; grid-template-columns:42px 1fr auto; align-items:center; gap:4px; padding:0 10px; }
     .field + .field { border-top:1px solid var(--line); }
@@ -55,17 +65,17 @@
     .search-btn { width:100%; border:0; margin-top:8px; padding:16px; border-radius:13px; background:var(--accent); color:var(--accent-ink); font-weight:800; }
     .quick { display:flex; gap:8px; margin:16px 0 24px; overflow:auto; scrollbar-width:none; }
     .chip { flex:0 0 auto; border:1px solid var(--line); border-radius:999px; background:transparent; color:#b5bcba; padding:8px 12px; font-size:.82rem; }
-    .chip.active { background:#303737; color:#fff; border-color:#3a4241; }
+    .chip.active { background:var(--accent-dim); color:var(--accent-soft); border-color:rgba(228,184,95,.38); }
     .results-head { display:flex; justify-content:space-between; align-items:end; margin-bottom:12px; }
-    .results-head h2 { margin:0; font:700 1rem Manrope,sans-serif; }
+    .results-head h2 { margin:0; font:700 1rem var(--font-display); }
     .results-head span { color:var(--muted); font-size:.82rem; }
     .ride-card { border:1px solid var(--line); border-radius:18px; padding:16px; background:#191d1e; transition:.2s ease; }
     .ride-card:hover { border-color:#474f4e; transform:translateY(-1px); }
     .card-top { display:flex; justify-content:space-between; align-items:flex-start; gap:12px; }
-    .time { font:700 1.35rem Manrope,sans-serif; letter-spacing:-.04em; }
+    .time { font:700 1.35rem var(--font-display); letter-spacing:-.04em; }
     .route { color:#d7dcda; margin-top:4px; }
     .route span { color:#69716f; margin:0 5px; }
-    .seat { color:var(--accent); font-size:.78rem; font-weight:700; background:rgba(216,255,114,.08); border-radius:999px; padding:7px 9px; }
+    .seat { color:var(--accent-soft); font-size:.78rem; font-weight:700; background:var(--accent-dim); border-radius:999px; padding:7px 9px; }
     .driver { display:flex; align-items:center; gap:10px; border-top:1px solid var(--line); margin-top:15px; padding-top:14px; }
     .avatar { width:34px; height:34px; border-radius:50%; background:linear-gradient(135deg,#f4c89d,#7f5949); display:grid; place-items:center; color:#22150f; font-weight:800; }
     .driver strong { display:block; font-size:.88rem; }
@@ -79,7 +89,7 @@
     .ride-list { display:grid; gap:10px; }
     .ride-card { cursor:pointer; }
     .ride-card:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible { outline:2px solid var(--accent); outline-offset:3px; }
-    .ride-card.selected { border-color:var(--accent); background:linear-gradient(135deg,rgba(216,255,114,.07),#191d1e 42%); }
+    .ride-card.selected { border-color:var(--accent); background:linear-gradient(135deg,var(--accent-dim),#191d1e 42%); }
     .trip-meta { display:flex; gap:12px; color:var(--muted); font-size:.74rem; margin-top:9px; }
     .empty { display:none; padding:28px 18px; border:1px dashed #3a4141; border-radius:18px; text-align:center; color:var(--muted); }
     .empty strong { color:var(--text); display:block; font:700 1rem Manrope,sans-serif; margin-bottom:5px; }
@@ -113,7 +123,7 @@
     .form-control input, .form-control select { width:100%; border:1px solid #353b3c; border-radius:12px; background:#202425; color:var(--text); padding:13px; outline:0; }
     .helper { color:var(--muted); font-size:.76rem; line-height:1.45; }
     .success { text-align:center; padding:10px 0 4px; }
-    .success-icon { width:64px; height:64px; border-radius:50%; background:rgba(216,255,114,.12); color:var(--accent); display:grid; place-items:center; margin:0 auto 18px; font-size:1.7rem; }
+    .success-icon { width:64px; height:64px; border-radius:50%; background:var(--accent-dim); color:var(--accent); display:grid; place-items:center; margin:0 auto 18px; font-size:1.7rem; }
     .success h3 { margin:0 0 8px; font:700 1.4rem Manrope,sans-serif; }
     .success p { color:var(--muted); margin:0 0 22px; }
     .toast { position:fixed; z-index:80; left:50%; bottom:24px; translate:-50% 20px; opacity:0; pointer-events:none; background:#f5f6f3; color:#131616; border-radius:14px; padding:12px 16px; font-weight:700; font-size:.88rem; box-shadow:0 20px 50px rgba(0,0,0,.35); transition:.25s ease; }
@@ -149,18 +159,13 @@
     </header>
     <main class="main">
       <section class="map" aria-label="Map showing available weekend rides">
-        <svg viewBox="0 0 900 760" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
-          <defs><pattern id="grid" width="72" height="72" patternUnits="userSpaceOnUse"><path d="M72 0H0V72" fill="none" stroke="#202526" stroke-width="1"/></pattern></defs>
-          <rect width="100%" height="100%" fill="url(#grid)" class="map-grid"/>
-          <g fill="none" stroke="#2b3031" stroke-width="15" stroke-linecap="round"><path d="M-80 170C180 120 290 250 480 190S760 10 980 110"/><path d="M100 820C160 540 335 540 390 320S370 90 440-80"/><path d="M-70 600C140 500 280 640 470 590S770 390 970 440"/><path d="M120-40C230 180 190 350 330 430S610 420 740 820"/></g>
-          <g fill="none" stroke="#171b1c" stroke-width="11" stroke-linecap="round"><path d="M-80 170C180 120 290 250 480 190S760 10 980 110"/><path d="M100 820C160 540 335 540 390 320S370 90 440-80"/><path d="M-70 600C140 500 280 640 470 590S770 390 970 440"/><path d="M120-40C230 180 190 350 330 430S610 420 740 820"/></g>
-          <path d="M200 590C310 510 400 390 565 212" fill="none" stroke="#d8ff72" stroke-width="4" stroke-linecap="round" stroke-dasharray="2 10"/>
-          <text x="116" y="665" class="campus-label">UT AUSTIN</text><text x="595" y="165" class="campus-label">DALLAS</text><text x="655" y="602" class="campus-label">HOUSTON</text>
-          <text x="220" y="130" class="map-label">WACO</text><text x="472" y="520" class="map-label">BASTROP</text><text x="84" y="385" class="map-label">MARBLE FALLS</text>
-        </svg>
-        <div class="map-top"><div class="map-pill"><strong>Friday departures</strong><span>12 rides across 4 routes</span></div><div class="map-key"><button class="icon-btn" aria-label="Center map">⌖</button></div></div>
-        <div class="marker m1"><span>UT</span></div><div class="marker m2"><span>6</span></div><div class="marker m3"><span>4</span></div>
-        <div class="map-caption">Routes are approximate until you confirm a pickup with the driver.</div>
+        <div id="mapCanvas" role="application" aria-label="Interactive road map. Drag to move and use the controls to zoom."></div>
+        <div class="map-status" id="mapStatus" role="status">Loading live map…</div>
+        <div class="map-top">
+          <div class="map-pill"><strong id="mapRouteTitle">Austin → Dallas</strong><span id="mapRouteMeta">Loading the driving route…</span></div>
+          <div class="map-key"><button class="icon-btn" id="centerMap" aria-label="Show all route destinations"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="7" stroke="currentColor" stroke-width="1.8"/><path d="M12 2v4m0 12v4M2 12h4m12 0h4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><circle cx="12" cy="12" r="2" fill="currentColor"/></svg></button></div>
+        </div>
+        <div class="map-caption">Live road map · drag to explore</div>
       </section>
       <aside class="panel">
         <div class="eyebrow"><span>Student-only rides</span><span>Free to book</span></div>
@@ -182,12 +187,12 @@
           <article class="ride-card" tabindex="0" role="button" data-city="Houston" data-driver="Maya R." data-initials="MR" data-time="4:10 PM" data-seats="1" data-arrival="7:05 PM" data-pickup="Jester West, Speedway entrance">
             <div class="card-top"><div><div class="time">4:10 PM</div><div class="route">UT Austin <span>→</span> Houston</div></div><span class="seat">1 seat</span></div>
             <div class="trip-meta"><span>2 hr 55 min</span><span>Pickup: Jester West</span></div>
-            <div class="driver"><div class="avatar" style="background:linear-gradient(135deg,#c9baf4,#725d99)">MR</div><div><strong>Maya R. <span class="check">◆</span></strong><small>Verified student · 12 rides</small></div><span class="arrow">→</span></div>
+            <div class="driver"><div class="avatar" style="background:linear-gradient(135deg,#d8d2c5,#736c60)">MR</div><div><strong>Maya R. <span class="check">◆</span></strong><small>Verified student · 12 rides</small></div><span class="arrow">→</span></div>
           </article>
           <article class="ride-card" tabindex="0" role="button" data-city="San Antonio" data-driver="Jordan K." data-initials="JK" data-time="5:15 PM" data-seats="3" data-arrival="6:45 PM" data-pickup="Dobie Mall, 21st Street">
             <div class="card-top"><div><div class="time">5:15 PM</div><div class="route">UT Austin <span>→</span> San Antonio</div></div><span class="seat">3 seats</span></div>
             <div class="trip-meta"><span>1 hr 30 min</span><span>Pickup: Dobie Mall</span></div>
-            <div class="driver"><div class="avatar" style="background:linear-gradient(135deg,#b4d9d0,#46766c)">JK</div><div><strong>Jordan K. <span class="check">◆</span></strong><small>Verified student · 5 rides</small></div><span class="arrow">→</span></div>
+            <div class="driver"><div class="avatar" style="background:linear-gradient(135deg,#dbc28d,#82693f)">JK</div><div><strong>Jordan K. <span class="check">◆</span></strong><small>Verified student · 5 rides</small></div><span class="arrow">→</span></div>
           </article>
           <div class="empty" id="emptyState"><strong>No rides on this route yet</strong>Try a nearby city or post the route you need.</div>
         </div>
@@ -220,12 +225,169 @@
     </form>
   </dialog>
   <div class="toast" role="status" aria-live="polite" id="toast">Seat request sent</div>
-  <script>
+  <script type="module">
+    import * as maplibregl from 'https://unpkg.com/maplibre-gl@6.10.0/dist/maplibre-gl.mjs';
+
     const $$ = (selector, parent = document) => [...parent.querySelectorAll(selector)];
     const tripDialog = document.querySelector('#tripDialog');
     const postDialog = document.querySelector('#postDialog');
     const toast = document.querySelector('#toast');
     let activeTrip = document.querySelector('.ride-card');
+
+    const routePlaces = {
+      origin: { name: 'UT Austin', coordinates: [-97.7353, 30.2851] },
+      Dallas: { name: 'Downtown Dallas', coordinates: [-96.7970, 32.7767] },
+      Houston: { name: 'Downtown Houston', coordinates: [-95.3698, 29.7604] },
+      'San Antonio': { name: 'Downtown San Antonio', coordinates: [-98.4936, 29.4241] }
+    };
+    const markerElements = new Map();
+    let mapReady = false;
+    let routeRequestId = 0;
+
+    const campusMap = new maplibregl.Map({
+      container: 'mapCanvas',
+      style: 'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json',
+      center: [-97.25, 31.25],
+      zoom: 5.25,
+      minZoom: 3.5,
+      maxZoom: 16,
+      attributionControl: false
+    });
+
+    campusMap.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'bottom-right');
+    campusMap.addControl(new maplibregl.AttributionControl({ compact: true }), 'bottom-left');
+
+    function makeMarker(label, type, city) {
+      const element = document.createElement('button');
+      element.type = 'button';
+      element.className = `map-marker ${type}`;
+      element.setAttribute('aria-label', city === 'origin' ? 'UT Austin starting point' : `${city} destination`);
+      element.innerHTML = `<span>${label}</span>`;
+      if (city !== 'origin') {
+        element.addEventListener('click', event => {
+          event.stopPropagation();
+          selectDestination(city, { filter: true, openDetails: false });
+        });
+      }
+      markerElements.set(city, element);
+      return element;
+    }
+
+    function addMapMarkers() {
+      new maplibregl.Marker({ element: makeMarker('UT', 'origin active', 'origin'), anchor: 'bottom' })
+        .setLngLat(routePlaces.origin.coordinates)
+        .addTo(campusMap);
+      Object.entries(routePlaces).filter(([city]) => city !== 'origin').forEach(([city, place]) => {
+        const label = city === 'San Antonio' ? 'SA' : city.slice(0, 3).toUpperCase();
+        new maplibregl.Marker({ element: makeMarker(label, 'destination', city), anchor: 'bottom' })
+          .setLngLat(place.coordinates)
+          .addTo(campusMap);
+      });
+    }
+
+    function setMarkerState(city) {
+      markerElements.forEach((element, markerCity) => {
+        element.classList.toggle('active', markerCity === city || markerCity === 'origin');
+        if (markerCity !== 'origin') element.classList.toggle('destination', markerCity !== city);
+      });
+    }
+
+    function setRouteGeometry(coordinates) {
+      const source = campusMap.getSource('selected-route');
+      if (!source) return;
+      source.setData({ type: 'Feature', properties: {}, geometry: { type: 'LineString', coordinates } });
+    }
+
+    function fitCoordinates(coordinates, padding = 76) {
+      const bounds = new maplibregl.LngLatBounds();
+      coordinates.forEach(coordinate => bounds.extend(coordinate));
+      campusMap.fitBounds(bounds, { padding, duration: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 900, maxZoom: 8.2 });
+    }
+
+    function findKnownCity(value) {
+      const normalized = value.trim().toLowerCase();
+      return Object.keys(routePlaces).find(city => city !== 'origin' && city.toLowerCase() === normalized);
+    }
+
+    async function updateMapRoute(city, shouldFit = true) {
+      if (!mapReady || !routePlaces[city]) return;
+      const requestId = ++routeRequestId;
+      setMarkerState(city);
+      const origin = routePlaces.origin.coordinates;
+      const destination = routePlaces[city].coordinates;
+      document.querySelector('#mapRouteTitle').textContent = `Austin → ${city}`;
+      document.querySelector('#mapRouteMeta').textContent = 'Calculating the driving route…';
+      const status = document.querySelector('#mapStatus');
+      status.hidden = false;
+      status.textContent = 'Updating route…';
+
+      try {
+        const coordinates = `${origin.join(',')};${destination.join(',')}`;
+        const response = await fetch(`https://router.project-osrm.org/route/v1/driving/${coordinates}?overview=full&geometries=geojson`);
+        if (!response.ok) throw new Error('Route service unavailable');
+        const payload = await response.json();
+        if (requestId !== routeRequestId) return;
+        const route = payload.routes?.[0];
+        if (!route?.geometry?.coordinates) throw new Error('Route not found');
+        setRouteGeometry(route.geometry.coordinates);
+        const hours = Math.floor(route.duration / 3600);
+        const minutes = Math.round((route.duration % 3600) / 60);
+        const miles = Math.round(route.distance / 1609.344);
+        document.querySelector('#mapRouteMeta').textContent = `${miles} mi · about ${hours ? `${hours} hr ` : ''}${minutes} min`;
+        if (shouldFit) fitCoordinates(route.geometry.coordinates, window.innerWidth <= 900 ? 46 : 86);
+      } catch (error) {
+        if (requestId !== routeRequestId) return;
+        setRouteGeometry([origin, destination]);
+        document.querySelector('#mapRouteMeta').textContent = 'Destination pinned · route preview unavailable';
+        if (shouldFit) fitCoordinates([origin, destination]);
+      } finally {
+        if (requestId === routeRequestId) status.hidden = true;
+      }
+    }
+
+    function showAllDestinations() {
+      if (!mapReady) return;
+      routeRequestId++;
+      setMarkerState('origin');
+      setRouteGeometry([]);
+      document.querySelector('#mapRouteTitle').textContent = 'Weekend routes from Austin';
+      document.querySelector('#mapRouteMeta').textContent = 'Dallas · Houston · San Antonio';
+      fitCoordinates(Object.values(routePlaces).map(place => place.coordinates), window.innerWidth <= 900 ? 42 : 74);
+    }
+
+    function selectDestination(city, options = {}) {
+      const { filter = false, openDetails = false } = options;
+      const knownCity = findKnownCity(city);
+      if (!knownCity) return;
+      document.querySelector('#to').value = knownCity;
+      $$('.chip').forEach(chip => chip.classList.toggle('active', chip.dataset.city === knownCity));
+      if (filter) filterRides(knownCity);
+      const card = $$('.ride-card').find(item => item.dataset.city === knownCity);
+      if (card) setActiveTrip(card);
+      if (openDetails && card) tripDialog.showModal();
+    }
+
+    campusMap.on('load', () => {
+      const theme = getComputedStyle(document.documentElement);
+      const routeGold = theme.getPropertyValue('--accent').trim();
+      const routeCasing = theme.getPropertyValue('--ink').trim();
+      campusMap.addSource('selected-route', { type: 'geojson', data: { type: 'Feature', properties: {}, geometry: { type: 'LineString', coordinates: [] } } });
+      campusMap.addLayer({ id: 'route-casing', type: 'line', source: 'selected-route', layout: { 'line-cap': 'round', 'line-join': 'round' }, paint: { 'line-color': routeCasing, 'line-width': 8, 'line-opacity': .82 } });
+      campusMap.addLayer({ id: 'route-line', type: 'line', source: 'selected-route', layout: { 'line-cap': 'round', 'line-join': 'round' }, paint: { 'line-color': routeGold, 'line-width': 4.5 } });
+      addMapMarkers();
+      mapReady = true;
+      document.querySelector('#mapStatus').hidden = true;
+      updateMapRoute('Dallas');
+    });
+
+    campusMap.on('error', event => {
+      if (mapReady || !event?.error) return;
+      const status = document.querySelector('#mapStatus');
+      status.hidden = false;
+      status.textContent = 'Map data could not be loaded';
+    });
+
+    document.querySelector('#centerMap').addEventListener('click', showAllDestinations);
 
     function showToast(message) {
       toast.textContent = message;
@@ -244,6 +406,7 @@
       document.querySelector('#detailArrival').textContent = `${data.city} · ${data.arrival}`;
       document.querySelector('#detailAvatar').textContent = data.initials;
       document.querySelector('#detailDriver').innerHTML = `${data.driver} <span class="check">◆</span>`;
+      updateMapRoute(data.city);
     }
 
     $$('.ride-card').forEach(card => {
@@ -273,9 +436,14 @@
     }
 
     $$('.chip').forEach(chip => chip.addEventListener('click', () => {
-      $$('.chip').forEach(item => item.classList.toggle('active', item === chip));
-      document.querySelector('#to').value = chip.dataset.city === 'All routes' ? '' : chip.dataset.city;
-      filterRides(chip.dataset.city);
+      if (chip.dataset.city === 'All routes') {
+        $$('.chip').forEach(item => item.classList.toggle('active', item === chip));
+        document.querySelector('#to').value = '';
+        filterRides('All routes');
+        showAllDestinations();
+        return;
+      }
+      selectDestination(chip.dataset.city, { filter: true, openDetails: false });
     }));
 
     document.querySelector('#searchForm').addEventListener('submit', event => {
@@ -286,6 +454,9 @@
         list.classList.remove('skeleton');
         const city = document.querySelector('#to').value.trim();
         const count = filterRides(city);
+        const knownCity = findKnownCity(city);
+        if (knownCity) selectDestination(knownCity, { filter: false, openDetails: false });
+        else if (!city) showAllDestinations();
         showToast(count ? `${count} matching ${count === 1 ? 'ride' : 'rides'} found` : 'No matching rides yet');
       }, 450);
     });
